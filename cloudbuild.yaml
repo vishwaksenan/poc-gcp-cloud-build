@@ -4,7 +4,8 @@ options:
 steps:
   - name: 'docker'
     args: ["build", "-t", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image", "."]
-  
+
+
   - name: "docker"
     args: ["push", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image"]
 

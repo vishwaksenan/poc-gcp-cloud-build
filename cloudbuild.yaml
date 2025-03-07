@@ -12,7 +12,7 @@ steps:
   #   args: ["auth", "configure-docker", "europe-west2-docker.pkg.dev"]
 
   - name: "us-docker.pkg.dev/gcb-catalog-release/preview/gcloud"
-    args: ["container", "clusters", "get-credentials", "cluster-1", "--region=europe-west2", "--project=playpen-ff1b21"]
+    args: ["sudo", "gcloud", "container", "clusters", "get-credentials", "cluster-1", "--region=europe-west2", "--project=playpen-ff1b21"]
 
   - name: "kubectl"
     args: ["config", "current-context"]

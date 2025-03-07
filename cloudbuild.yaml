@@ -8,7 +8,6 @@ steps:
   - name: "docker"
     args: ["push", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image"]
 
-
   - name: "gcloud"
     args: ["container", "clusters", "get-credentials", "cluster-1", "--region=europe-west2", "--project=playpen-ff1b21"]
 

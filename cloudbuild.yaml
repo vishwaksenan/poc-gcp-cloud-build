@@ -11,7 +11,10 @@ steps:
   - name: "bash"
     script: |
       chmod 777 /builder/home/
-      apt-get install google-cloud-sdk-gke-gcloud-auth-plugin kubectl
+  
+  - name: "ubuntu"
+    script: |
+      apt-get install -g google-cloud-sdk-gke-gcloud-auth-plugin
   
   - name: "us-docker.pkg.dev/gcb-catalog-release/preview/gcloud"
     args: ["auth", "configure-docker", "europe-west2-docker.pkg.dev"]

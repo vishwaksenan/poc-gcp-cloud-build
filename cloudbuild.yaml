@@ -8,10 +8,13 @@ steps:
   - name: "docker"
     args: ["push", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image"]
 
-  # - name: "us-docker.pkg.dev/gcb-catalog-release/preview/gcloud"
-  #   args: ["auth", "configure-docker", "europe-west2-docker.pkg.dev"]
   - name: "bash"
-    args: ["chmod", "777", "/builder/home/"]
+    script: |
+      chmod 777 /builder/home/
+      sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin kubectl
+  
+  - name: "us-docker.pkg.dev/gcb-catalog-release/preview/gcloud"
+    args: ["auth", "configure-docker", "europe-west2-docker.pkg.dev"]
 
   - name: "us-docker.pkg.dev/gcb-catalog-release/preview/gcloud"
     args: ["container", "clusters", "get-credentials", "cluster-1", "--region=europe-west2", "--project=playpen-ff1b21"]

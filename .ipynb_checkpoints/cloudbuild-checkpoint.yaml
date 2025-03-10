@@ -42,11 +42,11 @@ steps:
         # Construct the new tag
         new_tag="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
 
-#         # Create a new tag
-#         git tag $new_tag
+        # Create a new tag
+        # git tag $new_tag
 
-#         # Push the new tag to the remote repository
-#         git push origin $new_tag
+        # Push the new tag to the remote repository
+        # git push origin $new_tag
 
         echo "Updated tag to $new_tag and pushed to remote."
 

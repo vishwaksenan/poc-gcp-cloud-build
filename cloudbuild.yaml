@@ -77,4 +77,7 @@ steps:
       gcloud auth print-access-token | helm registry login -u oauth2accesstoken --password-stdin https://europe-west2-docker.pkg.dev
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
-    args: ["new_tag=$(car /workspace/new_tag.env)", "&&", "helm", "upgrade", "--install", "ds-usecase-temp", "--set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image", "--set=image.tag=$new_tag", "oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth", "--version", "0.1.0"]
+    script: |
+      #!/bin/bash
+      new_tag=$(cat /workspace/new_tag.env) 
+      helm upgrade --install ds-usecase-temp --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image --set=image.tag=$new_tag oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0"

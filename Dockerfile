@@ -1,7 +1,7 @@
 FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
 
 COPY . .
-RUN pip3 install -r requirements.txt
+RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python3"]
+ENTRYPOINT ["python"]
 CMD ["app.py"]

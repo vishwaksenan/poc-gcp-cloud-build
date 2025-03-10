@@ -5,8 +5,9 @@ steps:
   - name: 'europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image'
     secretEnv: ['GIT_PAT']
     script: |
-        # Configure Git to use the PAT
+        #!/bin/bash
 
+        # Configure Git to use the PAT
         git config --global credential.helper store
         echo "https://$GIT_PAT:@github.com" > ~/.git-credentials
 

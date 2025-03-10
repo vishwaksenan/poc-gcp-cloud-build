@@ -7,13 +7,9 @@ steps:
     script: |
         #!/bin/bash
 
-        # Configure Git to use the PAT
-        git config --global credential.helper store
-        echo "https://$GIT_PAT:@github.com" > ~/.git-credentials
+        
 
-        #!/bin/bash
         # Fetch the latest tags from the remote
-
         git fetch --tags
 
         # Get the latest tag from the master branch
@@ -48,13 +44,14 @@ steps:
         # Construct the new tag
         new_tag="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
 
+        git remote set-url origin https://vishwaksenan:$GIT_PAT@github.com/vishwaksenan/poc-gcp-cloud-build.git
         # Create a new tag
         git tag $new_tag
 
         # connect to git
 
         # Push the new tag to the remote repository
-        git push $new_tag
+        git push origin $new_tag
 
         echo "Updated tag to $new_tag and pushed to remote."
 
@@ -90,7 +87,7 @@ steps:
     script: |
       #!/bin/bash
       new_tag=$(cat /workspace/new_tag.env) 
-      helm upgrade --install ds-usecase-temp --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image --set=image.tag=$new_tag oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0"
+      helm upgrade --install ds-usecase-temp --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image --set=image.tag=$new_tag oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0
 
 availableSecrets:
   secretManager:

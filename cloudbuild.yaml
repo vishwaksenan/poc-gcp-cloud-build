@@ -54,14 +54,15 @@ steps:
     args: ["-c", "docker build -t europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$(cat /workspace/new_tag.env) ."]
 
   - name: "docker"
-    env:
-      - 'new_tag=$(cat /workspace/new_tag.env)'
-    args: ["push", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$new_tag"]
+    entrypoint: sh
+    args: ["-c", "docker push europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$(cat /workspace/new_tag.env)"]
   
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
-    env:
-      - 'new_tag=$(cat /workspace/new_tag.env)'
     script: |
+        #!/bin/bash
+
+        new_tag=$(cat /workspace/new_tag.env)
+        
         # Create a new tag
         git tag $new_tag
 

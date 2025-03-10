@@ -3,9 +3,16 @@ options:
 
 steps:
   - name: 'europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image'
+    secretEnv: ['GIT_PAT']
     script: |
+        # Configure Git to use the PAT
+
+        git config --global credential.helper store
+        echo "https://$GIT_PAT:@github.com" > ~/.git-credentials
+
         #!/bin/bash
         # Fetch the latest tags from the remote
+
         git fetch --tags
 
         # Get the latest tag from the master branch
@@ -43,8 +50,10 @@ steps:
         # Create a new tag
         git tag $new_tag
 
+        # connect to git
+
         # Push the new tag to the remote repository
-        git push origin $new_tag
+        git push $new_tag
 
         echo "Updated tag to $new_tag and pushed to remote."
 
@@ -81,3 +90,8 @@ steps:
       #!/bin/bash
       new_tag=$(cat /workspace/new_tag.env) 
       helm upgrade --install ds-usecase-temp --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image --set=image.tag=$new_tag oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0"
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/playpen-ff1b21/secrets/personal-git-connection-github-oauthtoken-4b3be7/versions/2
+    env: 'GIT_PAT'

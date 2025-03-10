@@ -3,10 +3,10 @@ options:
 
 steps:
   - name: 'docker'
-    args: ["build", "-t", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image", "."]
+    args: ["build", "-t", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:my-tag", "."]
 
   - name: "docker"
-    args: ["push", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image"]
+    args: ["push", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:my-tag"]
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     args: ["gcloud", "auth", "configure-docker", "europe-west2-docker.pkg.dev"]
@@ -22,4 +22,4 @@ steps:
       gcloud auth print-access-token | helm registry login -u oauth2accesstoken --password-stdin https://europe-west2-docker.pkg.dev
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
-    args: ["helm", "upgrade", "--install", "ds-usecase-temp", "--set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image", "oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth", "--version", "0.1.0"]
+    args: ["helm", "upgrade", "--install", "ds-usecase-temp", "--set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image,image.tag=my-tag", "oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth", "--version", "0.1.0"]

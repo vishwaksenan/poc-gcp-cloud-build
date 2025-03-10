@@ -4,6 +4,8 @@ options:
 steps:
   - name: 'europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image'
     script: |
+        #!/bin/bash
+        
         # Fetch the latest tags from the remote
         git fetch --tags
 

@@ -7,8 +7,6 @@ steps:
     script: |
         #!/bin/bash
 
-        
-
         # Fetch the latest tags from the remote
         git fetch --tags
 
@@ -44,22 +42,19 @@ steps:
         # Construct the new tag
         new_tag="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
 
+        # Set the remote URI to push the new tag
         git remote set-url origin https://vishwaksenan:$GIT_PAT@github.com/vishwaksenan/poc-gcp-cloud-build.git
-        # Create a new tag
+        
+        # Set the tag 
         git tag $new_tag
-
-        # connect to git
 
         # Push the new tag to the remote repository
         git push origin $new_tag
 
-        echo "Updated tag to $new_tag and pushed to remote."
-
-        # Export the new tag as an environment variable
+        # Saving tag in a env file so that it can be used in other steps
         echo $new_tag > /workspace/new_tag.env
-        
-        # verifying cat
-        cat /workspace/new_tag.env
+
+        echo "Updated tag to $new_tag and pushed to remote. Saved the new tag $new_tag in file /workspace/new_tag.env"
   
 
   - name: 'docker'

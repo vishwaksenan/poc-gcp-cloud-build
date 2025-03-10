@@ -2,11 +2,8 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  - name: 'gcr.io/cloud-builders/git'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
+  - name: 'europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image'
+    script: |
         # Fetch the latest tags from the remote
         git fetch --tags
 
@@ -24,37 +21,7 @@ steps:
         # Get the commit message for the current commit
         COMMIT_MESSAGE=$(git log -1 --pretty=%B $COMMIT_SHA)
 
-        # Determine the version increment based on the commit message prefix
-        if [[ $COMMIT_MESSAGE == release:* ]]; then
-            version_parts[0]=$((version_parts[0] + 1))
-            version_parts[1]=0
-            version_parts[2]=0
-        elif [[ $COMMIT_MESSAGE == feat:* ]]; then
-            version_parts[1]=$((version_parts[1] + 1))
-            version_parts[2]=0
-        elif [[ $COMMIT_MESSAGE == fix:* ]]; then
-            version_parts[2]=$((version_parts[2] + 1))
-        else
-            echo "Commit message does not match any known prefix. Exiting."
-            exit 0
-        fi
-
-        # Construct the new tag
-        new_tag="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
-
-        # Create a new tag
-        # git tag $new_tag
-
-        # Push the new tag to the remote repository
-        # git push origin $new_tag
-
-        echo "Updated tag to $new_tag and pushed to remote."
-
-        # Export the new tag as an environment variable
-        echo $new_tag > /workspace/new_tag.env
-        
-        # verifying cat
-        cat /workspace/new_tag.env
+        echo $COMMIT_MESSAGE
         
   - name: 'docker'
     args: ["build", "-t", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:my-tag-b", "."]

@@ -6,6 +6,22 @@ steps:
     script: |
         # Fetch the latest tags from the remote
         git fetch --tags
+
+        # Get the latest tag from the master branch
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null)
+
+        # Check if a tag exists
+        if [ -z "$latest_tag" ]; then
+            new_tag="0.0.0"
+        else
+            # Split the latest tag into its components (assuming semantic versioning)
+            IFS='.' read -r -a version_parts <<< "$latest_tag"
+        fi
+
+        # Get the commit message for the current commit
+        COMMIT_MESSAGE=$(git log -1 --pretty=%B $COMMIT_SHA)
+
+        echo $COMMIT_MESSAGE
         
   - name: 'docker'
     args: ["build", "-t", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:my-tag-b", "."]

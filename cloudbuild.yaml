@@ -2,8 +2,11 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  - name: 'bash'
-    script: |
+  - name: 'gcr.io/cloud-builders/git'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
         # Fetch the latest tags from the remote
         git fetch --tags
 
@@ -39,18 +42,18 @@ steps:
         # Construct the new tag
         new_tag="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
 
-        # Create a new tag
-        git tag $new_tag
+#         # Create a new tag
+#         git tag $new_tag
 
-        # Push the new tag to the remote repository
-        git push origin $new_tag
+#         # Push the new tag to the remote repository
+#         git push origin $new_tag
 
         echo "Updated tag to $new_tag and pushed to remote."
 
         # Export the new tag as an environment variable
         echo $new_tag > /workspace/new_tag.env
         
-        # verifying new tag
+        # verifying cat
         cat /workspace/new_tag.env
         
   - name: 'docker'

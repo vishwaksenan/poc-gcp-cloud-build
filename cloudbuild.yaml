@@ -51,7 +51,7 @@ steps:
 
   - name: 'docker'
     entrypoint: sh
-    args: ["-c", "build -t europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$(cat /workspace/new_tag.env) ."]
+    args: ["-c", "docker build -t europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$(cat /workspace/new_tag.env) ."]
 
   - name: "docker"
     env:

@@ -40,12 +40,6 @@ steps:
         # Construct the new tag
         new_tag="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
 
-        # Create a new tag
-        # git tag $new_tag
-
-        # Push the new tag to the remote repository
-        # git push origin $new_tag
-
         echo "Updated tag to $new_tag and pushed to remote."
 
         # Export the new tag as an environment variable
@@ -55,10 +49,24 @@ steps:
         cat /workspace/new_tag.env
         
   - name: 'docker'
-    args: ["build", "-t", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:my-tag-b", "."]
+    env:
+      - 'new_tag=$(cat /workspace/new_tag.env)'
+    args: ["build", "-t", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$new_tag", "."]
 
   - name: "docker"
-    args: ["push", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:my-tag-b"]
+    env:
+      - 'new_tag=$(cat /workspace/new_tag.env)'
+    args: ["push", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$new_tag"]
+  
+  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+    env:
+      - 'new_tag=$(cat /workspace/new_tag.env)'
+    script: |
+        # Create a new tag
+        git tag $new_tag
+
+        # Push the new tag to the remote repository
+        git push origin $new_tag
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     args: ["gcloud", "auth", "configure-docker", "europe-west2-docker.pkg.dev"]
@@ -74,4 +82,6 @@ steps:
       gcloud auth print-access-token | helm registry login -u oauth2accesstoken --password-stdin https://europe-west2-docker.pkg.dev
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
-    args: ["helm", "upgrade", "--install", "ds-usecase-temp", "--set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image", "--set=image.tag=my-tag-b", "oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth", "--version", "0.1.0"]
+    env:
+      - 'new_tag=$(cat /workspace/new_tag.env)'
+    args: ["helm", "upgrade", "--install", "ds-usecase-temp", "--set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image", "--set=image.tag=$new_tag", "oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth", "--version", "0.1.0"]

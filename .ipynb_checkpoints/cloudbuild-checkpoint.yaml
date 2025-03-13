@@ -2,11 +2,11 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  - name: 'gcr.io/cloud-builders/git'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
+  - name: 'europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image'
+    secretEnv: ['GIT_PAT']
+    script: |
+        #!/bin/bash
+
         # Fetch the latest tags from the remote
         git fetch --tags
 
@@ -42,25 +42,28 @@ steps:
         # Construct the new tag
         new_tag="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
 
-        # Create a new tag
-        # git tag $new_tag
+        # Set the remote URI to push the new tag
+        git remote set-url origin https://vishwaksenan:$GIT_PAT@github.com/vishwaksenan/poc-gcp-cloud-build.git
+        
+        # Set the tag 
+        git tag $new_tag
 
         # Push the new tag to the remote repository
-        # git push origin $new_tag
+        git push origin $new_tag
 
-        echo "Updated tag to $new_tag and pushed to remote."
-
-        # Export the new tag as an environment variable
+        # Saving tag in a env file so that it can be used in other steps
         echo $new_tag > /workspace/new_tag.env
-        
-        # verifying cat
-        cat /workspace/new_tag.env
-        
+
+        echo "Updated tag to $new_tag and pushed to remote. Saved the new tag $new_tag in file /workspace/new_tag.env"
+  
+
   - name: 'docker'
-    args: ["build", "-t", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:my-tag-b", "."]
+    entrypoint: sh
+    args: ["-c", "docker build -t europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$(cat /workspace/new_tag.env) ."]
 
   - name: "docker"
-    args: ["push", "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:my-tag-b"]
+    entrypoint: sh
+    args: ["-c", "docker push europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$(cat /workspace/new_tag.env)"]
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     args: ["gcloud", "auth", "configure-docker", "europe-west2-docker.pkg.dev"]
@@ -76,4 +79,20 @@ steps:
       gcloud auth print-access-token | helm registry login -u oauth2accesstoken --password-stdin https://europe-west2-docker.pkg.dev
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
-    args: ["helm", "upgrade", "--install", "ds-usecase-temp", "--set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image", "--set=image.tag=my-tag-b", "oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth", "--version", "0.1.0"]
+    script: |
+      #!/bin/bash
+      new_tag=$(cat /workspace/new_tag.env) 
+      helm upgrade --install ds-usecase-temp --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image --set=image.tag=$new_tag oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0
+      
+    - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+      args: ["sleep", "60"]
+
+    - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+    script: |
+      #!/bin/bash
+      new_tag=$(cat /workspace/new_tag.env) 
+      helm uninstall ds-usecase-temp
+availableSecrets:
+  secretManager:
+  - versionName: projects/playpen-ff1b21/secrets/personal-git-connection-github-oauthtoken-4b3be7/versions/2
+    env: 'GIT_PAT'

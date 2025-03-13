@@ -83,7 +83,15 @@ steps:
       #!/bin/bash
       new_tag=$(cat /workspace/new_tag.env) 
       helm upgrade --install ds-usecase-temp --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image --set=image.tag=$new_tag oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0
+      
+    - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+      args: ["sleep", "60"]
 
+    - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+    script: |
+      #!/bin/bash
+      new_tag=$(cat /workspace/new_tag.env) 
+      helm uninstall ds-usecase-temp
 availableSecrets:
   secretManager:
   - versionName: projects/playpen-ff1b21/secrets/personal-git-connection-github-oauthtoken-4b3be7/versions/2

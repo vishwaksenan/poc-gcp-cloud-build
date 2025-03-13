@@ -96,6 +96,10 @@ steps:
       #!/bin/bash
       rid=$(cat /workspace/rand)
       helm uninstall ds-usecase-temp-$rid
+  
+  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+    entrypoint: sh
+    args: ["-c", "gcloud artifact docker images delete europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand)"]
       
 availableSecrets:
   secretManager:

@@ -89,7 +89,7 @@ steps:
       helm upgrade --install ds-usecase-temp-$rid --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$rid --set=image.tag=test-$rid --set=rid=$rid oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0
       
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
-    args: ["sleep", "10"]
+    args: ["sleep", "600"]
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     script: |

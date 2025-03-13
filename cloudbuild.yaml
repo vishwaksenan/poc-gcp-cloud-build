@@ -7,63 +7,67 @@ steps:
     script: |
         #!/bin/bash
 
-        # Fetch the latest tags from the remote
-        git fetch --tags
+        # # Fetch the latest tags from the remote
+        # git fetch --tags
 
-        # Get the latest tag from the master branch
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null)
+        # # Get the latest tag from the master branch
+        # latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null)
 
-        # Check if a tag exists
-        if [ -z "$latest_tag" ]; then
-            new_tag="0.0.0"
-        else
-            # Split the latest tag into its components (assuming semantic versioning)
-            IFS='.' read -r -a version_parts <<< "$latest_tag"
-        fi
+        # # Check if a tag exists
+        # if [ -z "$latest_tag" ]; then
+        #     new_tag="0.0.0"
+        # else
+        #     # Split the latest tag into its components (assuming semantic versioning)
+        #     IFS='.' read -r -a version_parts <<< "$latest_tag"
+        # fi
 
-        # Get the commit message for the current commit
-        COMMIT_MESSAGE=$(git log -1 --pretty=%B $COMMIT_SHA)
+        # # Get the commit message for the current commit
+        # COMMIT_MESSAGE=$(git log -1 --pretty=%B $COMMIT_SHA)
 
-        # Determine the version increment based on the commit message prefix
-        if [[ $COMMIT_MESSAGE == release:* ]]; then
-            version_parts[0]=$((version_parts[0] + 1))
-            version_parts[1]=0
-            version_parts[2]=0
-        elif [[ $COMMIT_MESSAGE == feat:* ]]; then
-            version_parts[1]=$((version_parts[1] + 1))
-            version_parts[2]=0
-        elif [[ $COMMIT_MESSAGE == fix:* ]]; then
-            version_parts[2]=$((version_parts[2] + 1))
-        else
-            echo "Commit message does not match any known prefix. Exiting."
-            exit 0
-        fi
+        # # Determine the version increment based on the commit message prefix
+        # if [[ $COMMIT_MESSAGE == release:* ]]; then
+        #     version_parts[0]=$((version_parts[0] + 1))
+        #     version_parts[1]=0
+        #     version_parts[2]=0
+        # elif [[ $COMMIT_MESSAGE == feat:* ]]; then
+        #     version_parts[1]=$((version_parts[1] + 1))
+        #     version_parts[2]=0
+        # elif [[ $COMMIT_MESSAGE == fix:* ]]; then
+        #     version_parts[2]=$((version_parts[2] + 1))
+        # else
+        #     echo "Commit message does not match any known prefix. Exiting."
+        #     exit 0
+        # fi
 
-        # Construct the new tag
-        new_tag="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
+        # # Construct the new tag
+        # new_tag="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
 
-        # Set the remote URI to push the new tag
-        git remote set-url origin https://vishwaksenan:$GIT_PAT@github.com/vishwaksenan/poc-gcp-cloud-build.git
+        # # Set the remote URI to push the new tag
+        # git remote set-url origin https://vishwaksenan:$GIT_PAT@github.com/vishwaksenan/poc-gcp-cloud-build.git
         
-        # Set the tag 
-        git tag $new_tag
+        # # Set the tag 
+        # git tag $new_tag
 
-        # Push the new tag to the remote repository
-        git push origin $new_tag
+        # # Push the new tag to the remote repository
+        # git push origin $new_tag
 
-        # Saving tag in a env file so that it can be used in other steps
-        echo $new_tag > /workspace/new_tag.env
+        # # Saving tag in a env file so that it can be used in other steps
+        # echo $new_tag > /workspace/new_tag.env
 
-        echo "Updated tag to $new_tag and pushed to remote. Saved the new tag $new_tag in file /workspace/new_tag.env"
+        # echo "Updated tag to $new_tag and pushed to remote. Saved the new tag $new_tag in file /workspace/new_tag.env"
+
+        echo "$(tr -dc 'a-z' < /dev/urandom | head -c 1)$(tr -dc 'a-z0-9' < /dev/urandom | head -c 9)" > /workspace/rand
+        echo "--------- Random String ---------"
+        cat /workspace/rand
   
 
   - name: 'docker'
     entrypoint: sh
-    args: ["-c", "docker build -t europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$(cat /workspace/new_tag.env) ."]
+    args: ["-c", "docker build -t europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand):test-$(cat /workspace/rand) ."]
 
   - name: "docker"
     entrypoint: sh
-    args: ["-c", "docker push europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image:$(cat /workspace/new_tag.env)"]
+    args: ["-c", "docker push europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand):test-$(cat /workspace/rand)"]
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     args: ["gcloud", "auth", "configure-docker", "europe-west2-docker.pkg.dev"]
@@ -81,8 +85,8 @@ steps:
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     script: |
       #!/bin/bash
-      new_tag=$(cat /workspace/new_tag.env) 
-      helm upgrade --install ds-usecase-temp --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image --set=image.tag=$new_tag oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0
+      rid=$(cat /workspace/rand)
+      helm upgrade --install ds-usecase-temp-$rid --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$rid --set=image.tag=test-$rid --set=rid=$rid oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0
       
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     args: ["sleep", "180"]
@@ -90,8 +94,9 @@ steps:
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     script: |
       #!/bin/bash
-      new_tag=$(cat /workspace/new_tag.env) 
-      helm uninstall ds-usecase-temp
+      rid=$(cat /workspace/rand)
+      helm uninstall ds-usecase-temp-$rid
+      
 availableSecrets:
   secretManager:
   - versionName: projects/playpen-ff1b21/secrets/personal-git-connection-github-oauthtoken-4b3be7/versions/2

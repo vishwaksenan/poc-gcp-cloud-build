@@ -1,0 +1,16 @@
+project 1
+ user 1 -> working x -> /abcde 
+ user 2 -> working on y -> /xyz
+ 
+
+sre
+1. create that helm template.
+2. create a cloub build job  (with necessary steps).
+3. run the cloud build job.
+
+
+datascientist 
+1. create their ML repo
+2. add the cloud build job (preferably through a file)
+3. implement the trigger.
+4. helm install <name-ds-project> oci://<> --set=image.name= 

@@ -99,7 +99,7 @@ steps:
   
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     entrypoint: sh
-    args: ["-c", "gcloud artifacts docker images delete europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand)"]
+    args: ["-c", "y | gcloud artifacts docker images delete europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand)"]
       
 availableSecrets:
   secretManager:

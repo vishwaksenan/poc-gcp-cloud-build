@@ -89,7 +89,7 @@ steps:
       helm upgrade --install ds-usecase-temp-$rid --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$rid --set=image.tag=test-$rid --set=rid=$rid oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0
       
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
-    args: ["sleep", "180"]
+    args: ["sleep", "10"]
 
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     script: |
@@ -99,7 +99,7 @@ steps:
   
   - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
     entrypoint: sh
-    args: ["-c", "gcloud artifact docker images delete europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand)"]
+    args: ["-c", "gcloud artifacts docker images delete europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand)"]
       
 availableSecrets:
   secretManager:

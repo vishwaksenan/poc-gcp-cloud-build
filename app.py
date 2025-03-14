@@ -2,7 +2,7 @@ from flask import Flask
 app = Flask(__name__)
 
 @app.route('/feature2/')
-def hello():
+def feature2():
 	return "Hello World! From Playpen Demo Testing Feature 2\n"
 
 @app.route('/')

@@ -89,7 +89,7 @@ steps:
       helm upgrade --install ds-usecase-temp-$rid --set=image.repository=europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/ds-usecase-image-$rid --set=image.tag=test-$rid --set=rid=$rid oci://europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/transient-deployment --version 0.1.0
       
   - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
-    args: ["sleep", "900"]
+    args: ["sleep", "300"]
 
   - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
     script: |

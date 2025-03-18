@@ -3,7 +3,7 @@ options:
 
 steps:
   - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
-    secretEnv: ['GIT_PAT']
+    # secretEnv: ['GIT_PAT']
     script: |
         #!/bin/bash
 
@@ -101,7 +101,7 @@ steps:
     entrypoint: sh
     args: ["-c", "y | gcloud artifacts docker images delete europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/ds-usecase-image-$(cat /workspace/rand)"]
       
-availableSecrets:
-  secretManager:
-  - versionName: projects/playpen-ff1b21/secrets/personal-git-connection-github-oauthtoken-4b3be7/versions/2
-    env: 'GIT_PAT'
+# availableSecrets:
+#   secretManager:
+#   - versionName: projects/playpen-ff1b21/secrets/personal-git-connection-github-oauthtoken-4b3be7/versions/2
+#     env: 'GIT_PAT'

@@ -1,1 +1,0 @@
-# poc-gcp-cloud-build

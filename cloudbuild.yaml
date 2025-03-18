@@ -2,7 +2,7 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  - name: 'europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image'
+  - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
     secretEnv: ['GIT_PAT']
     script: |
         #!/bin/bash
@@ -63,43 +63,43 @@ steps:
 
   - name: 'docker'
     entrypoint: sh
-    args: ["-c", "docker build -t europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand):test-$(cat /workspace/rand) ."]
+    args: ["-c", "docker build -t europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/ds-usecase-image-$(cat /workspace/rand):test-$(cat /workspace/rand) ."]
 
   - name: "docker"
     entrypoint: sh
-    args: ["-c", "docker push europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand):test-$(cat /workspace/rand)"]
+    args: ["-c", "docker push europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/ds-usecase-image-$(cat /workspace/rand):test-$(cat /workspace/rand)"]
 
-  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+  - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
     args: ["gcloud", "auth", "configure-docker", "europe-west2-docker.pkg.dev"]
 
-  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
-    args: ["gcloud", "container", "clusters", "get-credentials", "cluster-1", "--region=europe-west2", "--project=playpen-ff1b21"]
+  - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
+    args: ["gcloud", "container", "clusters", "get-credentials", "cluster-1", "--region=europe-west2", "--project=playpen-86bd2a"]
 
-  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+  - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
     args: ["kubectl", "config", "current-context"]
 
-  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+  - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
     script: |
       gcloud auth print-access-token | helm registry login -u oauth2accesstoken --password-stdin https://europe-west2-docker.pkg.dev
 
-  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+  - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
     script: |
       #!/bin/bash
       rid=$(cat /workspace/rand)
-      helm upgrade --install ds-usecase-temp-$rid --set=image.repository=europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$rid --set=image.tag=test-$rid --set=rid=$rid oci://europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/service-with-auth --version 0.1.0
+      helm upgrade --install ds-usecase-temp-$rid --set=image.repository=europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/ds-usecase-image-$rid --set=image.tag=test-$rid --set=rid=$rid oci://europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/transient-deployment --version 0.1.0
       
-  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
-    args: ["sleep", "600"]
+  - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
+    args: ["sleep", "900"]
 
-  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+  - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
     script: |
       #!/bin/bash
       rid=$(cat /workspace/rand)
       helm uninstall ds-usecase-temp-$rid
   
-  - name: "europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/playpen-base-image"
+  - name: 'europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/playpen-base-image'
     entrypoint: sh
-    args: ["-c", "y | gcloud artifacts docker images delete europe-west2-docker.pkg.dev/playpen-ff1b21/helm-artifact-repo/ds-usecase-image-$(cat /workspace/rand)"]
+    args: ["-c", "y | gcloud artifacts docker images delete europe-west2-docker.pkg.dev/playpen-86bd2a/deployment-artifacts/ds-usecase-image-$(cat /workspace/rand)"]
       
 availableSecrets:
   secretManager:

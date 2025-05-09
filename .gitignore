@@ -1,1 +1,6 @@
+tls.key
+tls.crt
+ca.crt
+*.log
+*.py
 .ipynb_checkpoints/*

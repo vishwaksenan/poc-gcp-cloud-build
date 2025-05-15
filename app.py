@@ -7,11 +7,11 @@ def feature3():
 
 @app.route('/feature2/')
 def feature2():
-	return "Hello World! From Playpen Demo Testing Feature 2 Cert\n"
+	return "Hello World! From Playpen Demo Testing asdjhaksdhj 2 Cert\n"
 
 @app.route('/')
 def hello():
-	return "Test from Demo Demo change demo\n"
+	return "Test from Demo Demo change demo with security team\n"
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8000)

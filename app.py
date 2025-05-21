@@ -11,7 +11,7 @@ def feature2():
 
 @app.route('/')
 def hello():
-	return "Test from Demo Demo change demo with security team 1\n"
+	return "Test from Demo\n"
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8000)

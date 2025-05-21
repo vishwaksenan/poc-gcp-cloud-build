@@ -57,7 +57,7 @@ steps:
         # echo "Updated tag to $new_tag and pushed to remote. Saved the new tag $new_tag in file /workspace/new_tag.env"
 
         echo "$(tr -dc 'a-z' < /dev/urandom | head -c 1)$(tr -dc 'a-z0-9' < /dev/urandom | head -c 9)" > /workspace/rand
-        echo "--------- Random String ---------"
+        echo "--------- Unique ID ---------"
         cat /workspace/rand
   
 

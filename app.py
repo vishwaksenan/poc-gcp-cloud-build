@@ -11,7 +11,7 @@ def feature2():
 
 @app.route('/')
 def hello():
-	return "Test from GCP Demo ALex C\n"
+	return "Test from GCP Demo ALex C 2\n"
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8000)
